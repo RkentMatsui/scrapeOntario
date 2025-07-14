@@ -1,0 +1,90 @@
+# Ontario Sign Association - Member Directory Scraper
+
+This Python script scrapes the member directory of the Ontario Sign Association website. It uses Selenium to navigate a dynamic, JavaScript-driven website to collect detailed information about each member company. The scraped data, including company name, contact details, address, and website, is then saved to a clean CSV file.
+
+The script is specifically designed to handle dynamic page content and avoid common `StaleElementReferenceException` errors by following a robust, two-phase scraping process.
+
+## Features
+
+-   **Dynamic Navigation:** Uses Selenium to control a web browser, allowing it to interact with dropdowns and other JavaScript elements.
+-   **Stale Element Safe:** Avoids errors by first gathering all member profile links and *then* visiting each link to scrape details, rather than navigating back and forth.
+-   **Robust Waiting:** Employs `WebDriverWait` to ensure page elements are fully loaded before attempting to interact with them, making the script more reliable than using fixed `time.sleep()` delays.
+-   **Detailed Data Extraction:** Parses profile pages using BeautifulSoup to extract specific data fields like company name, contact person, phone, email, website, and full address.
+-   **CSV Output:** Saves all scraped data into a structured CSV file named `ontario_sign_detailed_profiles.csv`.
+
+## Requirements
+
+-   Python 3.6+
+-   Google Chrome browser installed
+-   The following Python packages:
+    -   `selenium`
+    -   `beautifulsoup4`
+    -   `webdriver-manager` (recommended for easy driver management, though the script uses the default Service)
+
+## Setup & Installation
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone <your-repo-url>
+    cd <your-repo-directory>
+    ```
+    Or simply download the Python script (`scraper.py`) to a local folder.
+
+2.  **Set up a Virtual Environment (Recommended):**
+    ```bash
+    # Create the virtual environment
+    python -m venv venv
+
+    # Activate it
+    # On Windows:
+    .\venv\Scripts\activate
+    # On macOS/Linux:
+    source venv/bin/activate
+    ```
+
+3.  **Install Required Packages:**
+    Create a `requirements.txt` file with the following content:
+    ```
+    selenium
+    beautifulsoup4
+    ```
+    Then, install the packages using pip:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## How to Run
+
+1.  Make sure you have completed the setup steps above.
+2.  Run the script from your terminal:
+    ```bash
+    python scraper.py
+    ```
+3.  The script will print its progress to the console, indicating which phase it is in (gathering links or scraping profiles) and its current progress.
+4.  Once completed, a file named `ontario_sign_detailed_profiles.csv` will be created in the same directory.
+
+## Code Overview
+
+The script operates in two distinct phases to ensure stability and prevent errors.
+
+#### Phase 1: Gathering Profile Links
+The script first navigates to the main directory page. It then iterates through every page in the member list dropdown. On each page, it collects the unique URL for every member profile and stores them in a Python list. This is done without leaving the main directory page, which prevents the page elements from becoming "stale".
+
+#### Phase 2: Scraping Profile Details
+Once all the profile URLs have been collected, the script loops through this list. For each URL, it visits the member's profile page directly. It then parses the HTML of the profile page to extract all the required data fields. This separation ensures that each page visit is independent.
+
+## Output File
+
+The script generates a CSV file with the following columns:
+-   `Company Name`
+-   `Contact Name`
+-   `Phone`
+-   `Email`
+-   `Website`
+-   `Address`
+-   `City`
+-   `Province/State`
+
+### Disclaimer
+
+This script is intended for educational purposes only. Always be respectful of the website you are scraping and review its `robots.txt` file and Terms of Service. Web scraping can place a heavy load on a website's servers, so run the script responsibly. The structure of the target website may change at any time, which could break the scraper.
